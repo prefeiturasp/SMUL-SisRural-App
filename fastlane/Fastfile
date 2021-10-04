@@ -1,0 +1,113 @@
+default_platform(:android)
+
+# ###########################################
+# ############## ANDROID LANES ##############
+# ###########################################
+
+platform :android do
+  private_lane :android_build do
+    gradle(
+      task: "clean",
+      project_dir: ENV['ANDROID_PROJECT_PATH'],
+      print_command_output: false
+    )
+
+    gradleProperties = {
+      'fastlaneApplicationId' => ENV['ANDROID_PACKAGE_NAME']
+    }
+
+    unless ENV['ANDROID_KEY_ALIAS'].nil?
+      gradleProperties['fastlaneKeyAlias'] = ENV['ANDROID_KEY_ALIAS']
+    end
+
+    unless ENV['ANDROID_KEY_PASSWORD'].nil?
+      gradleProperties['fastlaneKeyPassword'] = ENV['ANDROID_KEY_PASSWORD']
+    end
+
+    gradle(
+      task: "assemble",
+      flavor: ENV['ANDROID_FLAVOR'],
+      build_type: "Release",
+      project_dir: ENV['ANDROID_PROJECT_PATH'],
+      print_command_output: false,
+      properties: gradleProperties
+    )
+  end
+
+  private_lane :upload_gp do | options |
+    android_build
+
+    #AQUI VAI O UPLOAD P/ ALGUM LUGAR
+  end
+
+  private_lane :prepare_for_buid do
+    change_project_dotenv
+
+    copy_resources
+
+    #load_client_configs
+
+    #REVISAR AQUI
+    android_change_app_name(newName: ENV['ANDROID_APP_NAME'], manifest: "#{ENV['ANDROID_PROJECT_PATH']}/app/src/main/AndroidManifest.xml")
+  end
+
+  private_lane :production do | options |
+    prepare_for_buid
+ 
+    #increment_version_code(app_project_dir: '**/app', flavor: 'prod')
+
+    upload_gp(options)
+  end
+  
+  private_lane :hml do | options |
+    puts "Loading Hml Config"
+    Dotenv.overload ".env.hml"
+
+    prepare_for_buid
+
+    #increment_version_code(app_project_dir: '**/app', flavor: 'hml')
+
+    upload_gp(options)
+  end
+end
+
+# ###########################################
+# ############## GENERIC LANES ##############
+# ###########################################
+
+lane :hml do | options |
+  unless options[:skip_android]
+    self.runner.current_platform = :android
+    hml(options)
+  end
+end
+
+lane :production do | options |
+  unless options[:skip_android]
+    self.runner.current_platform = :android
+    production(options)
+  end
+end
+
+private_lane :change_project_dotenv do
+  puts "Changing project .env"
+  Dir.chdir("..") do
+    if FastlaneCore::Helper.windows? 
+      sh "xcopy /f/y #{ENV['PROJECT_DOTENV_FILE']} .env.production" 
+    else
+      sh "cp #{ENV['PROJECT_DOTENV_FILE']} .env.production"
+    end
+  end
+end
+
+private_lane :copy_resources do
+  puts "copy Resources .env"
+  Dir.chdir(".") do
+    if FastlaneCore::Helper.windows? 
+      sh "xcopy #{ENV['ANDROID_RESOURCES_PATH']} ..\\android\\app\\src\\main\\res /i/s/y"
+    else
+      # Não testei isso
+      sh "cp -f -r #{ENV['ANDROID_RESOURCES_PATH'].gsub("\\", "/")} ../android/app/src/main/res"
+    end
+  end
+end

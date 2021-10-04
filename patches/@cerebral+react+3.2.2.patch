@@ -1,0 +1,26 @@
+diff --git a/node_modules/@cerebral/react/lib/Hoc.js b/node_modules/@cerebral/react/lib/Hoc.js
+index fc370d4..d37d063 100644
+--- a/node_modules/@cerebral/react/lib/Hoc.js
++++ b/node_modules/@cerebral/react/lib/Hoc.js
+@@ -56,8 +56,8 @@ var BaseComponent = function (_React$Component) {
+ 
+ 
+   _createClass(BaseComponent, [{
+-    key: 'componentWillMount',
+-    value: function componentWillMount() {
++    key: 'UNSAFE_componentWillMount',
++    value: function UNSAFE_componentWillMount() {
+       this.view.mount();
+     }
+     /*
+@@ -77,8 +77,8 @@ var BaseComponent = function (_React$Component) {
+     */
+ 
+   }, {
+-    key: 'componentWillReceiveProps',
+-    value: function componentWillReceiveProps(nextProps) {
++    key: 'UNSAFE_componentWillReceiveProps',
++    value: function UNSAFE_componentWillReceiveProps(nextProps) {
+       var hasUpdate = this.view.onPropsUpdate(this.props, nextProps);
+       if (hasUpdate) {
+         this.forceUpdate();

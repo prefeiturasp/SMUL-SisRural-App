@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-native-material-selectize/src/react-native-selectize.js b/node_modules/react-native-material-selectize/src/react-native-selectize.js
+index a979979..5739eeb 100644
+--- a/node_modules/react-native-material-selectize/src/react-native-selectize.js
++++ b/node_modules/react-native-material-selectize/src/react-native-selectize.js
+@@ -104,7 +104,7 @@ export default class ReactNativeSelectize extends React.Component {
+     };
+   }
+ 
+-  componentWillReceiveProps(nextProps) {
++  UNSAFE_componentWillReceiveProps(nextProps) {
+     const items = this._getNormalizedItems(nextProps);
+ 
+     this.setState({ items });

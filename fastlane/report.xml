@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="fastlane.lanes">
+    
+    
+    
+      
+      <testcase classname="fastlane.lanes" name="00: default_platform" time="0.0030002">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="01: Switch to android hml lane" time="0.0020001">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="02: Switch to android prepare_for_buid lane" time="0.0030002">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="03: Switch to android change_project_dotenv lane" time="0.0030002">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="04: xcopy /f/y .env.production.hml .env.production" time="0.0370021">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="05: Switch to android copy_resources lane" time="0.0040002">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="06: xcopy res\hml\* ..\android\app\src\main\res /i/s/y" time="0.0940054">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="07: android_change_app_name" time="0.0070004">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="08: Switch to android upload_gp lane" time="0.0020002">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="09: Switch to android android_build lane" time="0.0020001">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="10: clean" time="20.8981953">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="11: assemblehmlRelease" time="141.1040707">
+        
+      </testcase>
+    
+  </testsuite>
+</testsuites>

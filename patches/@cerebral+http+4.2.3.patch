@@ -1,0 +1,13 @@
+diff --git a/node_modules/@cerebral/http/lib/DEFAULT_OPTIONS.js b/node_modules/@cerebral/http/lib/DEFAULT_OPTIONS.js
+index b654bd4..b0c67dd 100644
+--- a/node_modules/@cerebral/http/lib/DEFAULT_OPTIONS.js
++++ b/node_modules/@cerebral/http/lib/DEFAULT_OPTIONS.js
+@@ -51,7 +51,7 @@ exports.default = {
+ 
+     var responseHeaders = (0, _utils.getAllResponseHeaders)(xhr);
+ 
+-    if (options && options.onRequestCallback) {
++    if (options && options.onResponseCallback) {
+       options.onResponseCallback(xhr);
+     }
+ 

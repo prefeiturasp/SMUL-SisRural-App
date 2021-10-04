@@ -1,0 +1,80 @@
+diff --git a/node_modules/@fbcmobile/signalscan/NativeCellScanModule.js b/node_modules/@fbcmobile/signalscan/NativeCellScanModule.js
+index 381a393..137918b 100644
+--- a/node_modules/@fbcmobile/signalscan/NativeCellScanModule.js
++++ b/node_modules/@fbcmobile/signalscan/NativeCellScanModule.js
+@@ -24,6 +24,7 @@ export type CellularNetworkType =
+ export type CellScanData = {|
+   networkType: CellularNetworkType,
+   signalStrength: number,
++  signalLevel: number,
+   timestamp?: ?number,
+   baseStationID?: ?string,
+   networkID?: ?string,
+diff --git a/node_modules/@fbcmobile/signalscan/android/src/main/java/com/fbc/signalscan/CellScanResultsModule.java b/node_modules/@fbcmobile/signalscan/android/src/main/java/com/fbc/signalscan/CellScanResultsModule.java
+index 14cb510..8119ed8 100644
+--- a/node_modules/@fbcmobile/signalscan/android/src/main/java/com/fbc/signalscan/CellScanResultsModule.java
++++ b/node_modules/@fbcmobile/signalscan/android/src/main/java/com/fbc/signalscan/CellScanResultsModule.java
+@@ -25,6 +25,7 @@ import android.telephony.CellInfoGsm;
+ import android.telephony.CellInfoLte;
+ import android.telephony.CellInfoWcdma;
+ import android.telephony.CellLocation;
++import android.telephony.CellSignalStrength;
+ import android.telephony.CellSignalStrengthCdma;
+ import android.telephony.CellSignalStrengthGsm;
+ import android.telephony.CellSignalStrengthLte;
+@@ -70,6 +71,7 @@ public class CellScanResultsModule extends ReactContextBaseJavaModule {
+   private static final String CELL_FIELD_NETWORK_ID = "networkID";
+   private static final String CELL_FIELD_SYSTEM_ID = "systemID";
+   private static final String CELL_FIELD_DBM = "signalStrength";
++  private static final String CELL_FIELD_LEVEL = "signalLevel";
+   private static final String CELL_FIELD_MCC = "mobileCountryCode";
+   private static final String CELL_FIELD_MNC = "mobileNetworkCode";
+   private static final String CELL_FIELD_LAC = "locationAreaCode";
+@@ -281,6 +283,7 @@ public class CellScanResultsModule extends ReactContextBaseJavaModule {
+       }
+       WritableMap fields = Arguments.createMap();
+       fields.putInt(CELL_FIELD_DBM, MIN_SIGNAL_STRENGTH);
++      fields.putInt(CELL_FIELD_LEVEL, CellSignalStrength.SIGNAL_STRENGTH_NONE_OR_UNKNOWN);
+       if (cellLocation instanceof GsmCellLocation) {
+         Log.d(TAG, "cell is instance of GsmCellLocation");
+         fields.putString(CELL_FIELD_TYPE, GSM);
+@@ -342,6 +345,7 @@ public class CellScanResultsModule extends ReactContextBaseJavaModule {
+   private static WritableMap getDefaultValues() {
+     WritableMap fields = Arguments.createMap();
+     fields.putInt(CELL_FIELD_DBM, MIN_SIGNAL_STRENGTH);
++    fields.putInt(CELL_FIELD_LEVEL, CellSignalStrength.SIGNAL_STRENGTH_NONE_OR_UNKNOWN);
+     fields.putString(CELL_FIELD_ID, "0");
+     fields.putString(CELL_FIELD_MNC, "0");
+     return fields;
+@@ -355,6 +359,7 @@ public class CellScanResultsModule extends ReactContextBaseJavaModule {
+     final CellIdentityCdma identityCdma = cell.getCellIdentity();
+     fields.putString(CELL_FIELD_ID, Integer.toString(identityCdma.getBasestationId()));
+     fields.putInt(CELL_FIELD_DBM, cdma.getDbm() != Integer.MAX_VALUE ? cdma.getDbm() : 0);
++    fields.putInt(CELL_FIELD_LEVEL, cdma.getLevel() != Integer.MAX_VALUE ? cdma.getLevel() : 0);
+     fields.putString(CELL_FIELD_BASE_STATION_ID, Integer.toString(identityCdma.getBasestationId()));
+     fields.putString(CELL_FIELD_NETWORK_ID, Integer.toString(identityCdma.getNetworkId()));
+     fields.putString(CELL_FIELD_SYSTEM_ID, Integer.toString(identityCdma.getSystemId()));
+@@ -369,6 +374,7 @@ public class CellScanResultsModule extends ReactContextBaseJavaModule {
+     final CellIdentityGsm identityGsm = cell.getCellIdentity();
+     fields.putString(CELL_FIELD_ID, Integer.toString(identityGsm.getCid()));
+     fields.putInt(CELL_FIELD_DBM, gsm.getDbm() != Integer.MAX_VALUE ? gsm.getDbm() : 0);
++    fields.putInt(CELL_FIELD_LEVEL, gsm.getLevel() != Integer.MAX_VALUE ? gsm.getLevel() : 0);
+     fields.putString(CELL_FIELD_LAC, Integer.toString(identityGsm.getLac()));
+     fields.putString(CELL_FIELD_MCC, Integer.toString(identityGsm.getMcc()));
+     fields.putString(CELL_FIELD_MNC, Integer.toString(identityGsm.getMnc()));
+@@ -391,6 +397,7 @@ public class CellScanResultsModule extends ReactContextBaseJavaModule {
+     final CellIdentityLte identityLte = cell.getCellIdentity();
+     fields.putString(CELL_FIELD_ID, Integer.toString(identityLte.getCi()));
+     fields.putInt(CELL_FIELD_DBM, lte.getDbm() != Integer.MAX_VALUE ? lte.getDbm() : 0);
++    fields.putInt(CELL_FIELD_LEVEL, lte.getLevel() != Integer.MAX_VALUE ? lte.getLevel() : 0);
+     fields.putString(CELL_FIELD_PCI, Integer.toString(identityLte.getPci()));
+     fields.putString(CELL_FIELD_TAC, Integer.toString(identityLte.getTac()));
+     fields.putInt(CELL_FIELD_TIMING_ADVANCE, lte.getTimingAdvance());
+@@ -414,6 +421,7 @@ public class CellScanResultsModule extends ReactContextBaseJavaModule {
+     final CellIdentityWcdma identityWcdma = cell.getCellIdentity();
+     fields.putString(CELL_FIELD_ID, Integer.toString(identityWcdma.getCid()));
+     fields.putInt(CELL_FIELD_DBM, wcdma.getDbm() != Integer.MAX_VALUE ? wcdma.getDbm() : 0);
++    fields.putInt(CELL_FIELD_LEVEL, wcdma.getLevel() != Integer.MAX_VALUE ? wcdma.getLevel() : 0);
+     fields.putString(CELL_FIELD_LAC, Integer.toString(identityWcdma.getLac()));
+     fields.putString(CELL_FIELD_MCC, Integer.toString(identityWcdma.getMcc()));
+     fields.putString(CELL_FIELD_MNC, Integer.toString(identityWcdma.getMnc()));
